@@ -1,0 +1,10 @@
+defaultProject: my-company-data-dev
+defaultLocation: EU
+defaultDataset: staging
+defaultAssertionDataset: dataform_assertions
+dataformCoreVersion: 3.0.0
+vars:
+  raw_dataset: raw
+  environment: dev
+  calendar_start: "2023-01-01"
+  calendar_end: "2027-12-31"

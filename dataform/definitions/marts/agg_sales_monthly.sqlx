@@ -1,0 +1,28 @@
+config {
+  type: "table",
+  schema: "marts",
+  tags: ["marts", "aggregates"],
+  description: "Monthly KPIs by category and channel (revenue orders only). Ready for dashboards.",
+  assertions: {
+    uniqueKey: ["year_month", "category", "channel"]
+  }
+}
+
+SELECT
+  calendar.year_month,
+  products.category,
+  sales.channel,
+  COUNT(DISTINCT sales.order_id) AS orders,
+  COUNT(DISTINCT sales.customer_id) AS customers,
+  SUM(sales.quantity) AS units,
+  SUM(sales.net_amount) AS net_revenue,
+  SUM(sales.margin_amount) AS margin,
+  ROUND(${constants.safeDivide("SUM(sales.margin_amount)", "SUM(sales.net_amount)")}, 4) AS margin_pct,
+  ROUND(${constants.safeDivide("SUM(sales.net_amount)", "COUNT(DISTINCT sales.order_id)")}, 2) AS avg_order_value
+FROM ${ref("fct_sales")} AS sales
+INNER JOIN ${ref("dim_products")} AS products
+  ON sales.product_id = products.product_id
+INNER JOIN ${ref("dim_date")} AS calendar
+  ON sales.order_date = calendar.date_day
+WHERE sales.is_revenue
+GROUP BY 1, 2, 3

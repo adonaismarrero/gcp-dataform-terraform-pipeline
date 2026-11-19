@@ -1,0 +1,15 @@
+config {
+  type: "assertion",
+  tags: ["quality"],
+  description: "Reconciliation: total net revenue in fct_sales must match the staging order lines."
+}
+
+WITH totals AS (
+  SELECT
+    (SELECT SUM(net_amount) FROM ${ref("fct_sales")}) AS fact_total,
+    (SELECT SUM(net_amount) FROM ${ref("stg_order_items")}) AS staging_total
+)
+
+SELECT *
+FROM totals
+WHERE ABS(COALESCE(fact_total, 0) - COALESCE(staging_total, 0)) > 0.01

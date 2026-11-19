@@ -1,0 +1,31 @@
+config {
+  type: "view",
+  schema: "staging",
+  tags: ["staging"],
+  description: "Product catalogue, typed, with the unit margin pre-calculated.",
+  columns: {
+    product_id: "Business key of the product.",
+    product_name: "Commercial name of the product.",
+    category: "Product category.",
+    unit_price: "Current list price per unit (EUR, VAT excluded).",
+    unit_cost: "Current cost per unit (EUR).",
+    unit_margin: "unit_price - unit_cost.",
+    is_active: "Whether the product can still be sold."
+  },
+  assertions: {
+    uniqueKey: ["product_id"],
+    nonNull: ["product_id", "product_name", "unit_price"],
+    rowConditions: ["unit_price >= 0", "unit_cost >= 0"]
+  }
+}
+
+SELECT
+  SAFE_CAST(product_id AS INT64) AS product_id,
+  TRIM(product_name) AS product_name,
+  TRIM(category) AS category,
+  SAFE_CAST(unit_price AS NUMERIC) AS unit_price,
+  SAFE_CAST(unit_cost AS NUMERIC) AS unit_cost,
+  SAFE_CAST(unit_price AS NUMERIC) - SAFE_CAST(unit_cost AS NUMERIC) AS unit_margin,
+  COALESCE(SAFE_CAST(is_active AS BOOL), FALSE) AS is_active
+FROM ${ref("products")}
+WHERE product_id IS NOT NULL

@@ -1,0 +1,10 @@
+project_id         = "my-company-data-dev"
+environment        = "dev"
+region             = "europe-west1"
+data_location      = "EU"
+upload_sample_data = true
+
+# Optional: link the Dataform repository to this Git repository to enable the
+# scheduled release + daily workflow (requires the dataform-git-token secret).
+git_remote_url     = ""
+git_default_branch = "main"

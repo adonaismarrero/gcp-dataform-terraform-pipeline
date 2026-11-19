@@ -1,0 +1,53 @@
+product_id,product_name,category,unit_price,unit_cost,is_active
+1,Headphones Basic,Electronics,122.98,56.30,true
+2,Headphones Pro,Electronics,409.93,270.80,true
+3,Keyboard Basic,Electronics,164.98,98.79,true
+4,Keyboard Pro,Electronics,486.95,304.98,true
+5,Mouse Basic,Electronics,27.18,15.04,true
+6,Mouse Pro,Electronics,170.39,95.93,true
+7,Monitor Basic,Electronics,98.21,51.62,true
+8,Monitor Pro,Electronics,507.53,327.08,true
+9,Webcam Basic,Electronics,185.85,84.79,true
+10,Webcam Pro,Electronics,332.03,165.20,true
+11,Speaker Basic,Electronics,296.99,172.52,true
+12,Speaker Pro,Electronics,112.27,74.99,true
+13,Lamp Basic,Home,235.13,145.59,true
+14,Lamp Pro,Home,294.24,166.20,true
+15,Chair Basic,Home,135.36,61.05,true
+16,Chair Pro,Home,279.83,167.50,true
+17,Desk Basic,Home,122.05,56.33,true
+18,Desk Pro,Home,269.05,142.09,true
+19,Shelf Basic,Home,84.91,57.15,true
+20,Shelf Pro,Home,89.94,46.69,true
+21,Rug Basic,Home,115.87,55.55,true
+22,Rug Pro,Home,121.08,54.95,true
+23,Mirror Basic,Home,133.37,66.90,true
+24,Mirror Pro,Home,138.30,67.13,true
+25,Yoga mat Basic,Sports,39.73,20.31,true
+26,Yoga mat Pro,Sports,122.70,65.61,true
+27,Dumbbells Basic,Sports,22.57,12.81,true
+28,Dumbbells Pro,Sports,31.78,14.73,true
+29,Bike light Basic,Sports,28.05,16.80,true
+30,Bike light Pro,Sports,162.64,101.62,true
+31,Water bottle Basic,Sports,42.99,28.13,true
+32,Water bottle Pro,Sports,133.02,77.60,true
+33,Backpack Basic,Sports,92.64,52.47,true
+34,Backpack Pro,Sports,158.46,107.74,true
+35,Data engineering Basic,Books,33.87,21.04,true
+36,Data engineering Pro,Books,54.94,27.91,true
+37,SQL cookbook Basic,Books,53.33,32.22,true
+38,SQL cookbook Pro,Books,49.31,30.81,true
+39,Cloud patterns Basic,Books,49.86,33.44,true
+40,Cloud patterns Pro,Books,21.52,12.24,true
+41,Python guide Basic,Books,34.14,16.82,true
+42,Python guide Pro,Books,65.62,31.62,true
+43,Coffee maker Basic,Kitchen,149.90,97.31,true
+44,Coffee maker Pro,Kitchen,195.46,126.68,true
+45,Kettle Basic,Kitchen,81.13,44.89,true
+46,Kettle Pro,Kitchen,168.66,116.96,true
+47,Knife set Basic,Kitchen,71.22,46.54,true
+48,Knife set Pro,Kitchen,231.06,129.13,true
+49,Blender Basic,Kitchen,104.85,53.37,true
+50,Blender Pro,Kitchen,44.56,30.42,true
+51,Pan Basic,Kitchen,95.29,56.99,true
+52,Pan Pro,Kitchen,170.54,111.79,true

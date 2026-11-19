@@ -1,0 +1,10 @@
+project_id         = "my-company-data-prod"
+environment        = "prod"
+region             = "europe-west1"
+data_location      = "EU"
+upload_sample_data = false
+
+git_remote_url     = "https://github.com/<owner>/gcp-dataform-terraform-pipeline.git"
+git_default_branch = "main"
+compile_cron       = "0 5 * * *"
+run_cron           = "0 6 * * *"

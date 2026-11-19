@@ -1,0 +1,41 @@
+config {
+  type: "view",
+  schema: "staging",
+  tags: ["staging"],
+  description: "Order lines, typed, with gross, discount and net amounts calculated.",
+  columns: {
+    order_item_id: "Business key of the order line.",
+    order_id: "Order the line belongs to.",
+    product_id: "Product sold.",
+    quantity: "Units sold.",
+    unit_price: "Price per unit at the moment of the sale (EUR, VAT excluded).",
+    discount_pct: "Discount applied, as a fraction (0.10 = 10%).",
+    gross_amount: "quantity * unit_price.",
+    discount_amount: "gross_amount * discount_pct.",
+    net_amount: "gross_amount - discount_amount."
+  },
+  assertions: {
+    uniqueKey: ["order_item_id"],
+    nonNull: ["order_item_id", "order_id", "product_id", "quantity", "unit_price"],
+    rowConditions: ["quantity > 0", "discount_pct BETWEEN 0 AND 1"]
+  }
+}
+
+WITH typed AS (
+  SELECT
+    SAFE_CAST(order_item_id AS INT64) AS order_item_id,
+    SAFE_CAST(order_id AS INT64) AS order_id,
+    SAFE_CAST(product_id AS INT64) AS product_id,
+    SAFE_CAST(quantity AS INT64) AS quantity,
+    SAFE_CAST(unit_price AS NUMERIC) AS unit_price,
+    COALESCE(SAFE_CAST(discount_pct AS NUMERIC), 0) AS discount_pct
+  FROM ${ref("order_items")}
+  WHERE order_item_id IS NOT NULL
+)
+
+SELECT
+  *,
+  quantity * unit_price AS gross_amount,
+  ROUND(quantity * unit_price * discount_pct, 2) AS discount_amount,
+  quantity * unit_price - ROUND(quantity * unit_price * discount_pct, 2) AS net_amount
+FROM typed

@@ -1,0 +1,41 @@
+config {
+  type: "view",
+  schema: "intermediate",
+  tags: ["intermediate"],
+  description: "Order lines enriched with the order header and the product: the single source for sales facts.",
+  assertions: {
+    uniqueKey: ["order_item_id"],
+    nonNull: ["order_item_id", "order_date", "customer_id", "product_id"]
+  }
+}
+
+SELECT
+  items.order_item_id,
+  items.order_id,
+  orders.customer_id,
+  items.product_id,
+  orders.order_ts,
+  orders.order_date,
+  orders.channel,
+  orders.payment_method,
+  orders.status,
+  orders.is_revenue,
+  products.category,
+  items.quantity,
+  items.unit_price,
+  items.discount_pct,
+  items.gross_amount,
+  items.discount_amount,
+  items.net_amount,
+  items.quantity * products.unit_cost AS cost_amount,
+  items.net_amount - items.quantity * products.unit_cost AS margin_amount,
+  -- Shipping is charged per order: allocate it to lines in proportion to their value.
+  ROUND(
+    orders.shipping_cost * ${constants.safeDivide("items.net_amount", "SUM(items.net_amount) OVER (PARTITION BY items.order_id)")},
+    2
+  ) AS shipping_allocated
+FROM ${ref("stg_order_items")} AS items
+INNER JOIN ${ref("stg_orders")} AS orders
+  ON items.order_id = orders.order_id
+INNER JOIN ${ref("stg_products")} AS products
+  ON items.product_id = products.product_id

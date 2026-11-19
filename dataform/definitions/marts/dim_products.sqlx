@@ -1,0 +1,27 @@
+config {
+  type: "table",
+  schema: "marts",
+  tags: ["marts", "dimensions"],
+  description: "Product dimension with a price band for reporting.",
+  assertions: {
+    uniqueKey: ["product_id"],
+    nonNull: ["product_id", "product_name", "category"]
+  }
+}
+
+SELECT
+  product_id,
+  product_name,
+  category,
+  unit_price,
+  unit_cost,
+  unit_margin,
+  ROUND(${constants.safeDivide("unit_margin", "unit_price")}, 4) AS unit_margin_pct,
+  CASE
+    WHEN unit_price < 25 THEN "0-25"
+    WHEN unit_price < 100 THEN "25-100"
+    WHEN unit_price < 300 THEN "100-300"
+    ELSE "300+"
+  END AS price_band,
+  is_active
+FROM ${ref("stg_products")}

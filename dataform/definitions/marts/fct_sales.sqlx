@@ -1,0 +1,54 @@
+config {
+  type: "incremental",
+  schema: "marts",
+  tags: ["marts", "facts"],
+  description: "Sales fact at order-line grain. Incremental (MERGE on order_item_id), partitioned by day.",
+  uniqueKey: ["order_item_id"],
+  bigquery: {
+    partitionBy: "order_date",
+    clusterBy: ["customer_id", "product_id"],
+    labels: { layer: "marts" }
+  },
+  columns: {
+    order_item_id: "Grain: one row per order line.",
+    order_date: "Partition column. Joins to dim_date.date_day.",
+    customer_id: "Joins to dim_customers.",
+    product_id: "Joins to dim_products.",
+    net_amount: "Revenue after discounts, VAT excluded (EUR).",
+    margin_amount: "net_amount - cost of goods sold (EUR).",
+    is_revenue: "Filter on TRUE to report revenue (excludes cancelled and returned orders)."
+  },
+  assertions: {
+    uniqueKey: ["order_item_id"],
+    nonNull: ["order_item_id", "order_date", "customer_id", "product_id", "net_amount"]
+  }
+}
+
+SELECT
+  order_item_id,
+  order_id,
+  order_date,
+  order_ts,
+  customer_id,
+  product_id,
+  channel,
+  payment_method,
+  status,
+  is_revenue,
+  quantity,
+  unit_price,
+  discount_pct,
+  gross_amount,
+  discount_amount,
+  net_amount,
+  ROUND(net_amount * ${constants.VAT_RATE}, 2) AS vat_amount,
+  cost_amount,
+  margin_amount,
+  shipping_allocated,
+  CURRENT_TIMESTAMP() AS loaded_at
+FROM ${ref("int_order_items_enriched")}
+${when(incremental(),
+  `WHERE order_date >= (
+     SELECT DATE_SUB(MAX(order_date), INTERVAL ${constants.INCREMENTAL_LOOKBACK_DAYS} DAY)
+     FROM ${self()}
+   )`)}

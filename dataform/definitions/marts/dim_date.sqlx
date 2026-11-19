@@ -1,0 +1,26 @@
+config {
+  type: "table",
+  schema: "marts",
+  tags: ["marts", "dimensions"],
+  description: "Calendar dimension generated in SQL (no source table needed).",
+  assertions: {
+    uniqueKey: ["date_day"]
+  }
+}
+
+SELECT
+  date_day,
+  EXTRACT(YEAR FROM date_day) AS year,
+  EXTRACT(QUARTER FROM date_day) AS quarter,
+  EXTRACT(MONTH FROM date_day) AS month,
+  FORMAT_DATE("%Y-%m", date_day) AS year_month,
+  EXTRACT(ISOWEEK FROM date_day) AS iso_week,
+  EXTRACT(DAYOFWEEK FROM date_day) AS day_of_week,
+  FORMAT_DATE("%A", date_day) AS day_name,
+  EXTRACT(DAYOFWEEK FROM date_day) IN (1, 7) AS is_weekend,
+  DATE_TRUNC(date_day, MONTH) AS month_start,
+  LAST_DAY(date_day, MONTH) AS month_end
+FROM UNNEST(GENERATE_DATE_ARRAY(
+  DATE "${dataform.projectConfig.vars.calendar_start}",
+  DATE "${dataform.projectConfig.vars.calendar_end}"
+)) AS date_day

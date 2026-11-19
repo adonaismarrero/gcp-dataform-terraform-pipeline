@@ -1,0 +1,20 @@
+config {
+  type: "assertion",
+  tags: ["quality"],
+  description: "Every order line must belong to an existing order and an existing product."
+}
+
+-- Returns the offending rows: the assertion fails if any row comes back.
+SELECT
+  items.order_item_id,
+  items.order_id,
+  items.product_id,
+  orders.order_id IS NULL AS missing_order,
+  products.product_id IS NULL AS missing_product
+FROM ${ref("stg_order_items")} AS items
+LEFT JOIN ${ref("stg_orders")} AS orders
+  ON items.order_id = orders.order_id
+LEFT JOIN ${ref("stg_products")} AS products
+  ON items.product_id = products.product_id
+WHERE orders.order_id IS NULL
+   OR products.product_id IS NULL

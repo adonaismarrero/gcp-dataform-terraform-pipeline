@@ -1,0 +1,52 @@
+config {
+  type: "table",
+  schema: "marts",
+  tags: ["marts", "dimensions"],
+  description: "Customer dimension with lifetime metrics and an RFM-style segment.",
+  columns: {
+    customer_id: "Primary key.",
+    first_order_date: "Date of the first revenue order.",
+    last_order_date: "Date of the latest revenue order.",
+    lifetime_orders: "Number of revenue orders.",
+    lifetime_revenue: "Sum of net_amount of revenue orders (EUR).",
+    customer_segment: "new / occasional / regular / vip, based on orders and revenue."
+  },
+  assertions: {
+    uniqueKey: ["customer_id"],
+    nonNull: ["customer_id", "customer_segment"]
+  }
+}
+
+WITH activity AS (
+  SELECT
+    customer_id,
+    MIN(order_date) AS first_order_date,
+    MAX(order_date) AS last_order_date,
+    COUNT(DISTINCT order_id) AS lifetime_orders,
+    SUM(net_amount) AS lifetime_revenue
+  FROM ${ref("int_order_items_enriched")}
+  WHERE is_revenue
+  GROUP BY customer_id
+)
+
+SELECT
+  customers.customer_id,
+  CONCAT(customers.first_name, " ", customers.last_name) AS full_name,
+  customers.email,
+  customers.city,
+  customers.region,
+  customers.country,
+  customers.signup_date,
+  activity.first_order_date,
+  activity.last_order_date,
+  COALESCE(activity.lifetime_orders, 0) AS lifetime_orders,
+  COALESCE(activity.lifetime_revenue, 0) AS lifetime_revenue,
+  CASE
+    WHEN activity.lifetime_orders IS NULL THEN "new"
+    WHEN activity.lifetime_orders >= 12 OR activity.lifetime_revenue >= 3000 THEN "vip"
+    WHEN activity.lifetime_orders >= 5 THEN "regular"
+    ELSE "occasional"
+  END AS customer_segment
+FROM ${ref("stg_customers")} AS customers
+LEFT JOIN activity
+  ON customers.customer_id = activity.customer_id

@@ -1,0 +1,2 @@
+bucket = "my-company-terraform-state"
+prefix = "sales-pipeline/dev"
