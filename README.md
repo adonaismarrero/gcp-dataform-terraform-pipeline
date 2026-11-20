@@ -4,7 +4,7 @@
 ![Terraform](https://img.shields.io/badge/Terraform-7B42BC?logo=terraform&logoColor=white)
 ![BigQuery](https://img.shields.io/badge/BigQuery-669DF6?logo=googlebigquery&logoColor=white)
 ![Dataform](https://img.shields.io/badge/Dataform-4285F4?logo=googlecloud&logoColor=white)
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+[![License: MIT © Adonais Marrero](https://img.shields.io/badge/License-MIT%20%C2%A9%20Adonais%20Marrero-green.svg)](LICENSE)
 
 Pipeline analítico de referencia en **Google Cloud**: los ficheros llegan a un bucket de
 Cloud Storage, **Dataform** los transforma en BigQuery por capas (staging → intermediate →
